@@ -1,0 +1,66 @@
+{% load static %}
+{% load staticfiles %}
+{% load i18n %}
+
+
+<html lang="{{ LANGUAGE_CODE }}" class="no-js">
+    <head>
+        {% block head %}
+            {% block meta %}
+                <meta charset="utf-8">
+                <!--[if IE]><meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'><![endif]-->
+                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+                <meta property="og:title" content="RingLead Prototype v2" />
+                <meta property="og:url" content="http://www.ringlead.com.com"/>
+                <meta property="og:description" content="RingLead Prototype"/>
+            {% endblock %}
+                <title>
+                    {% block title %}
+                        {% trans 'RingLead Prototype' %}
+                    {% endblock %}
+                </title>
+        {% endblock %}
+
+        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}" media="screen">
+        <link rel="stylesheet" href="{% static 'bootstrap/css/bootswatch-paper.css' %}" media="screen">
+        <link rel="stylesheet" href="{% static 'bootstrap/css/custom.css' %}" media="screen">
+        <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
+        <link href="{% static 'bootstrap-toggle-master/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
+
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'justgage/raphael.min.js' %}"></script>
+        <script src="{% static 'justgage/justgage.min.js' %}"></script>
+        <script src="{% static 'bootstrap-toggle-master/js/bootstrap-toggle.min.js' %}"></script>
+
+    </head>
+    <body>
+
+        {% block body %}
+
+            {% include 'nav.html' %}
+            <div class="row">
+              <div class="col-md-12">
+                {% block layout %}
+                {% endblock %}
+              </div>
+            </div>
+        {% endblock %}  <!-- / body block -->
+
+        <!-- Enable tooltips -->
+        <script>
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+        </script>
+        <!-- <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap-switch.js' %}"></script> -->
+    </body>
+
+
+
+</html>
