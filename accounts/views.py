@@ -148,6 +148,6 @@ def UserInvite(request):
 
 
         # CustomUserManager.create_user(CustomUserManager, email=email, first_name='', last_name='', is_active=False, token=token, password='')
-        return HttpResponse("Invite user")
+        return HttpResponse(ret)
     else:
         return HttpResponse("Failed")
