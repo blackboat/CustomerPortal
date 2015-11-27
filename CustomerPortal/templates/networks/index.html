@@ -45,12 +45,13 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="FiltersModalLabel">Invite</h4>
+                <input type="text" name="networkName" id="networkName" value="" readonly="True"/>
+                <input type="hidden" name="networkId" id="networkId" value=""/>
             </div>
             <div class="modal-body">
-                <input class="text" id="invitemail">
+                <input class="text" id="invitemail" placeholder="Input Email to Invite">
                 <div class="modal-footer">
-                    <input type="text" name="networkId" id="networkName" value=""/>
-                    <input type="hidden" name="networkId" id="networkId" value=""/>
+
                     <a class="btn btn-success" data-toggle="modal" href="#myModal" id="userinvite">Invite</a>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                 </div>
