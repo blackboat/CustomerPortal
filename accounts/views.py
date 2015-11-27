@@ -127,17 +127,20 @@ def UserInvite(request):
         email = request.POST.get('email')
         networkId = request.POST.get('network')
         token = hashlib.sha1(email).hexdigest()
+        ret = "Invite User"
         try:
             user = CustomUser.objects.get(email=email)
             try:
                 send_mail('CustomerPortal', 'Administrator assigned new network to you.', "tomslauva@gmail.com", [email])
             except:
+                ret = "Email Failed"
                 pass
         except:
             user = CustomUser.objects.create_user(email=email, first_name='', last_name='', is_active=False, token=token, password='')
             try:
                 send_mail('CustomerPortal', 'You are invited from CustomerPortal. You can signup CustomerPortal from ' + 'http://portal.cloudwifi.ca:8000/accounts/register?token=' + token, "tomslauva@gmail.com", [email])
             except:
+                ret = "Email Failed"
                 pass
 
         network = Network.objects.get(pk=networkId)
