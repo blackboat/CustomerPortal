@@ -47,7 +47,9 @@ class CustomUserCreateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(CustomUserCreateView, self).get_context_data(**kwargs)
-        context['user12'] = self.request.GET.get('token', '')
+        if self.request.GET.get('token', '') == '':
+            context['user'] = False
+            return context
         try:
             user = CustomUser.objects.get(token=self.request.GET.get('token', ''))
             context['user'] = user
