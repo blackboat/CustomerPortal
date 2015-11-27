@@ -9,7 +9,8 @@ class CustomUserManager(BaseUserManager):
         email,
         first_name,
         last_name,
-        mobile_number,
+        is_active=True,
+        token='',
         password=None
         ):
         """
@@ -23,36 +24,37 @@ class CustomUserManager(BaseUserManager):
             email=self.normalize_email(email),
             first_name=first_name,
             last_name=last_name,
-            # mobile_number=mobile_number,
+            is_active=is_active,
+            token=token,
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(
-        self,
-        email,
-        first_name,
-        last_name,
-        mobile_number,
-        password
-        ):
-            """
-            Creates and saves a superuser with the given email, date of
-            birth and password.
-            """
-            user = self.create_user(
-                email,
-                first_name=first_name,
-                last_name=last_name,
-                mobile_number=mobile_number,
-                password=password,
-            )
-            user.is_admin = True
-            user.is_superuser = True
-            user.save(using=self._db)
-            return user
+    def create_superuser(self, email, first_name, last_name, password):
+        """
+        Creates and saves a superuser with the given email, date of
+        birth and password.
+        """
+        user = self.create_user(
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            password=password,
+        )
+        user.is_admin = True
+        user.is_superuser = True
+        user.save(using=self._db)
+        return user
+
+    def update_user(self, user, email, first_name, last_name, password, is_active):
+        user.first_name = first_name
+        user.last_name = last_name
+        user.is_active = is_active
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
 
 class CustomUser(AbstractBaseUser):
@@ -73,6 +75,7 @@ class CustomUser(AbstractBaseUser):
     #     message="Phone number must be entered in the format: \
     #         '+999999999'. Up to 15 digits allowed."
     #     )
+    token = models.CharField(max_length=256, null=True, blank=True)
     # mobile_number = models.CharField(
     #     unique=True,
     #     validators=[phone_regex],
@@ -91,14 +94,14 @@ class CustomUser(AbstractBaseUser):
     # Required definitions for custom user model
     objects = CustomUserManager()
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'mobile_number']
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
     def __unicode__(self):
         return self.email
 
     def get_full_name(self):
         # The user is identified by their email address
-        return self.email
+        return self.first_name + ' ' + self.last_name
 
     def get_short_name(self):
         # The user is identified by their email address

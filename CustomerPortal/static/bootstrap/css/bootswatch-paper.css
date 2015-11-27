@@ -7557,3 +7557,14 @@ input[type="checkbox"]:disabled:checked:after,
 .carousel-caption h6 {
   color: inherit;
 }
+
+
+
+.networks li {
+  width: 400px;
+  margin-bottom: 30px;
+}
+
+.networks li .invitebtn {
+  float: right;
+}

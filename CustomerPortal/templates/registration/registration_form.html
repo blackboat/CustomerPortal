@@ -8,7 +8,8 @@
 {% block title %}{% trans "Sign Up" %}{% endblock %}
 {% block layout %}
     {% block content %}
-
+{{user}}
+    {% if user != False %}
     <div id="loginwrap">
       <div class="container" >
         <div class="row">
@@ -51,18 +52,11 @@
                         </div>
 
                         <!-- Mobile Phone input -->
-                        <div class="form-group" align="center">
+                        <!--<div class="form-group" align="center">-->
                           <div>
-                              {% if form.mobile_number.errors %}
-                                  <div class=" has-error">
-                                      <label class="control-label" for="inputError">{{ form.mobile_number.errors.as_text }}</label>
-                                      {% render_field form.mobile_number class+="form-control" id+="inputError" placeholder="" %}
-                                  </div>
-                              {% else %}
-                                  {% render_field form.mobile_number class+="form-control" placeholder="Mobile number" %}
-                              {% endif %}
+                              {% render_field form.token class+="form-control" %}
                           </div>
-                        </div>
+                        <!--</div>-->
 
                         <!-- Email input -->
                         <div class="form-group" align="center">
@@ -252,7 +246,7 @@
               <h3 class="text-success"><strong>Email Verification</strong></h3>
               <p>Send more efficient email campaigns and cut down on wasted sales outreach by deleting or archiving disposable, dysfunctional and role (support@ or admin@) email addresses.</p>
               <div align="center">
-                  <p><font size="5">joe.johnson@datasidekick.com <span class="label label-success">Verified <i class="fa fa-check"></i></span></font></p>
+                  <p></p>
               </div>
           </div>
           <div class="modal-footer">
@@ -261,7 +255,11 @@
         </div>
       </div>
     </div>
-
+    {% else %}
+    <div>
+        <h3>You must invite from other user has permission.</h3>
+    </div>
+    {% endif %}
 
 
 
@@ -269,34 +267,6 @@
 {% endblock %}
 
 {% block foot_js %}
-    <script type="text/javascript" src="{% static 'int-tel-input/js/intlTelInput.min.js' %}"></script>
-    <script>
-    $(function() {
-        var telInput = $('input[name="mobile_number"]'),
-            elParentDiv = telInput.closest('.form-group');
-        telInput.intlTelInput({utilsScript: "{% static 'int-tel-input/js/util.js' %}"});
-
-        // on blur: validate
-        telInput.blur(function() {
-          if ($.trim(telInput.val())) {
-            if (telInput.intlTelInput("isValidNumber")) {
-              elParentDiv.removeClass('has-error').addClass('has-success');
-            } else {
-              elParentDiv.removeClass('has-success').addClass('has-error');
-            }
-          }
-        });
-
-        // on keydown: reset
-        telInput.keydown(function() {
-          elParentDiv.removeClass('has-success').removeClass('has-error');
-        });
-
-        $("form").submit(function() {
-          telInput.val(telInput.intlTelInput("getNumber"));
-        });
-    });
-    </script>
 {% endblock %}
 
 

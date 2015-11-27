@@ -1,12 +1,16 @@
-from django.views.generic import FormView, RedirectView, TemplateView
+from django.views.generic import FormView, RedirectView, TemplateView, UpdateView
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
+import hashlib
+from django.core.mail import send_mail
 
 from accounts.forms import CustomUserCreationForm, CustomUserLoginForm
-from accounts.models import CustomUser
+from accounts.models import CustomUser, CustomUserManager
+from networks.models import Network
+from CustomerPortal.settings import EMAIL_HOST_USER
 # from integrations.salesforce.models import OauthToken as SalesforceOauth
 
 
@@ -17,7 +21,7 @@ class LoginRequiredMixin(object):
         return login_required(view)
 
 
-class CustomUserCreateView(FormView):
+class CustomUserCreateView(UpdateView):
     form_class = CustomUserCreationForm
     template_name = 'registration/registration_form.html'
     success_url = '/welcome/'
@@ -33,6 +37,23 @@ class CustomUserCreateView(FormView):
         login(self.request, user)
         # call super simply redirect to success_url
         return super(CustomUserCreateView, self).form_valid(form)
+
+    def get_object(self, queryset=None):
+        try:
+            user = CustomUser.objects.get(token=self.request.GET.get('token', ''))
+            return user
+        except:
+            return
+
+    def get_context_data(self, **kwargs):
+        context = super(CustomUserCreateView, self).get_context_data(**kwargs)
+        context['user12'] = self.request.GET.get('token', '')
+        try:
+            user = CustomUser.objects.get(token=self.request.GET.get('token', ''))
+            context['user'] = user
+        except:
+            context['user'] = False
+        return context
 
 
 class CustomUserLoginView(FormView):
@@ -97,3 +118,30 @@ class UserConnectionsView(LoginRequiredMixin, TemplateView):
         #     pass
 
         return context
+
+
+def UserInvite(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        networkId = request.POST.get('network')
+        token = hashlib.sha1(email).hexdigest()
+        user = CustomUser.objects.get(email=email)
+        if not user:
+            user = CustomUser.objects.create_user(email=email, first_name='', last_name='', is_active=False, token=token, password='')
+            try:
+                send_mail('CustomerPortal', 'You are invited from CustomerPortal. You can signup CustomerPortal from ' + 'http://127.0.0.1:8000/accounts/register?token=' + token, "tomslauva@gmail.com", [email])
+            except:
+                pass
+        else:
+            try:
+                send_mail('CustomerPortal', 'Administrator assigned new network to you.', "tomslauva@gmail.com", [email])
+            except:
+                pass
+        network = Network.objects.get(pk=networkId)
+        user.network_set.add(network)
+
+
+        # CustomUserManager.create_user(CustomUserManager, email=email, first_name='', last_name='', is_active=False, token=token, password='')
+        return HttpResponse("Invite user")
+    else:
+        return HttpResponse("Failed")

@@ -4,7 +4,8 @@ from accounts.views import (
     CustomUserCreateView,
     CustomUserLoginView,
     LogoutView,
-    UserConnectionsView
+    UserConnectionsView,
+    UserInvite
     )
 
 
@@ -13,4 +14,5 @@ urlpatterns = [
     url(r'^login/', CustomUserLoginView.as_view(), name='login'),
     url(r'^connections/', UserConnectionsView.as_view(), name='settings'),
     url(r'^logout/', LogoutView.as_view(), name='logout'),
+    url(r'^invitation/$', UserInvite, name='invitation')
     ]

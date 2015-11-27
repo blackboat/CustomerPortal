@@ -1,16 +1,16 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserChangeForm
 
 from .models import CustomUser
 
 
-class CustomUserCreationForm(UserCreationForm):
+class CustomUserCreationForm(UserChangeForm):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
 
-    class Meta(UserCreationForm.Meta):
+    class Meta(UserChangeForm.Meta):
         model = CustomUser
-        fields = ('first_name', 'last_name', 'email')
+        fields = ('first_name', 'last_name', 'email', 'password')
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -21,10 +21,11 @@ class CustomUserCreationForm(UserCreationForm):
             raise forms.ValidationError('Passwords do not match!')
         return password2
 
-    def save(self, commit=True):
+    def save(self, commit=True, is_active=True):
         # Save the provided password in hashed format
-        user = super(UserCreationForm, self).save(commit=False)
+        user = super(UserChangeForm, self).save(commit=False)
         user.set_password(self.cleaned_data['password1'])
+        user.is_active = is_active
         if commit:
             user.save()
         return user
