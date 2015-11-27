@@ -128,7 +128,7 @@ def UserInvite(request):
         networkId = request.POST.get('network')
         token = hashlib.sha1(email).hexdigest()
         user = CustomUser.objects.get(email=email)
-        if not user:
+        if user == []:
             user = CustomUser.objects.create_user(email=email, first_name='', last_name='', is_active=False, token=token, password='')
             try:
                 send_mail('CustomerPortal', 'You are invited from CustomerPortal. You can signup CustomerPortal from ' + 'http://127.0.0.1:8000/accounts/register?token=' + token, "tomslauva@gmail.com", [email])
