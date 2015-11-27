@@ -127,18 +127,19 @@ def UserInvite(request):
         email = request.POST.get('email')
         networkId = request.POST.get('network')
         token = hashlib.sha1(email).hexdigest()
-        user = CustomUser.objects.get(email=email)
-        if user == []:
+        try:
+            user = CustomUser.objects.get(email=email)
+            try:
+                send_mail('CustomerPortal', 'Administrator assigned new network to you.', "tomslauva@gmail.com", [email])
+            except:
+                pass
+        except:
             user = CustomUser.objects.create_user(email=email, first_name='', last_name='', is_active=False, token=token, password='')
             try:
                 send_mail('CustomerPortal', 'You are invited from CustomerPortal. You can signup CustomerPortal from ' + 'http://127.0.0.1:8000/accounts/register?token=' + token, "tomslauva@gmail.com", [email])
             except:
                 pass
-        else:
-            try:
-                send_mail('CustomerPortal', 'Administrator assigned new network to you.', "tomslauva@gmail.com", [email])
-            except:
-                pass
+
         network = Network.objects.get(pk=networkId)
         user.network_set.add(network)
 
