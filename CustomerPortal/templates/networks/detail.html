@@ -1,27 +1,56 @@
-<script data-key="{{ object.data_key }}" data-token="{{ object.data_token }}" data-network-id="{{ object.data_network_id }}" src="https://embed.cloudtrax.com/v1.js"></script>
+{% extends 'base.html' %}
+
+{% load i18n %}
+{% load static %}
+{% load staticfiles %}
+
+{% block layout %}
+  <style>
+  .portal-network-details > div {
+    margin-bottom: 15px;
+    padding: 0 10px;
+  }
+  .portal-network-details .SortableTable tr.pagination {
+    display: table-row;
+    margin: 0;
+  }
+  .portal-network-details .SortableTable div.pages > span {
+    height: 2.5em;
+  }
+  .portal-network-details select.limiter {
+    padding: 6px 16px;
+    background-color: #fff;
+  }
+  .portal-network-details .label {
+    color: #333;
+  }
+  </style>
+<script data-key="{{ object.data_key }}" data-token="{{ object.data_token }}" data-network-id="{{ object.data_network_id }}" src="{% static 'js/pull-data.js' %}"></script>
 
 <!-- You may use any amount of the following DIVs on your page -->
+<div class="portal-network-details">
+  <!-- Application data pie chart -->
+  <div class="portal-ApplicationPieChart"></div>
 
-<!-- Application data pie chart -->
-<div class="cloudtrax-ApplicationPieChart"></div>
+  <!-- Application data sortable table -->
+  <div class="portal-ApplicationTable"></div>
 
-<!-- Application data sortable table -->
-<div class="cloudtrax-ApplicationTable"></div>
+  <!-- Network usage histogram -->
+  <div class="portal-NetworkHistogram"></div>
 
-<!-- Network usage histogram -->
-<div class="cloudtrax-NetworkHistogram"></div>
+  <!-- Network map -->
+  <div class="portal-NetworkMap"></div>
 
-<!-- Network map -->
-<div class="cloudtrax-NetworkMap"></div>
+  <!-- Access point sortable table -->
+  <div class="portal-NodeTable"></div>
 
-<!-- Access point sortable table -->
-<div class="cloudtrax-NodeTable"></div>
+  <!-- Access point sortable table with some columns removed for compactness -->
+  <div class="portal-NodeTableCompact"></div>
 
-<!-- Access point sortable table with some columns removed for compactness -->
-<div class="cloudtrax-NodeTableCompact"></div>
+  <!-- Client sortable table -->
+  <div class="portal-ClientTable"></div>
 
-<!-- Client sortable table -->
-<div class="cloudtrax-ClientTable"></div>
-
-<!-- Site survey sortable table -->
-<div class="cloudtrax-SurveyTable"></div>
+  <!-- Site survey sortable table -->
+  <div class="portal-SurveyTable"></div>
+</div>
+{% endblock %}

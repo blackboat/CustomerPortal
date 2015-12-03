@@ -3,6 +3,7 @@ from django.views import generic
 
 from .models import Network
 
+
 class NetworksListView(generic.ListView):
     template_name = 'networks/index.html'
     context_object_name = 'networks'
@@ -16,6 +17,7 @@ class NetworksListView(generic.ListView):
         if self.request.user.is_admin == True:
             return Network.objects.all()
         return Network.objects.filter(assigned_user=self.request.user)
+
 
 class NetworkDetailView(generic.DetailView):
     model = Network
