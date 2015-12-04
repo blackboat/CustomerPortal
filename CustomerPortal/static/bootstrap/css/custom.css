@@ -94,3 +94,15 @@ animation-delay: 12s;
 .subtle_header {
   color:#737373;
 }
+
+.navbar-header .navbar-brand {
+    padding: 10px;
+}
+
+#ivt_network_list .list-unstyled {
+    padding-left: 30px;
+}
+
+#InviteModal .invite-progressing {
+    color: #000000;
+}

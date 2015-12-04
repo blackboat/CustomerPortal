@@ -125,7 +125,7 @@ class UserConnectionsView(LoginRequiredMixin, TemplateView):
 def UserInvite(request):
     if request.method == 'POST':
         email = request.POST.get('email')
-        networkId = request.POST.get('network')
+        networkId = request.POST.getlist('network[]')
         token = hashlib.sha1(email).hexdigest()
         ret = "Invite User"
         try:
@@ -143,8 +143,8 @@ def UserInvite(request):
                 ret = "Email Failed to " + email
                 pass
 
-        network = Network.objects.get(pk=networkId)
-        user.network_set.add(network)
+        networks = Network.objects.filter(pk__in=networkId)
+        user.network_set.add(*networks)
 
 
         # CustomUserManager.create_user(CustomUserManager, email=email, first_name='', last_name='', is_active=False, token=token, password='')

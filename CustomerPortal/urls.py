@@ -17,10 +17,13 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
+from networks import views
+
 
 urlpatterns = [
-    url(r'^$', login_required(
-        TemplateView.as_view(template_name='index.html')), name='home'),
+    url(r'^$', views.HomepageView.as_view(), name='home'),
+    # url(r'^$', login_required(
+    #     TemplateView.as_view(template_name='index.html')), name='home'),
     url(r'^accounts/', include('accounts.urls', namespace='accounts')),
     url(r'^networks/', include('networks.urls', namespace='networks')),
     url(r'^welcome/$', login_required(

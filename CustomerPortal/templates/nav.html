@@ -10,7 +10,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="/">CustomerPortal</a>
+      <a class="navbar-brand" href="/"><img src="{% static 'img/sp_logo_white.png' %}" height="40px"></a>
     </div>
 
 
@@ -30,6 +30,7 @@
             <ul class="dropdown-menu">
               <li><a href="#">User Management</a></li>
               <li><a href="#">Billing & Payments</a></li>
+              <li><a href="#" data-toggle="modal" data-target="#InviteModal" data-id="{{ network.id }}::{{ network.name }}" class="invitebtn">Invite a user</a></li>
             </ul>
         </li>
         <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
@@ -44,3 +45,147 @@
     </div>
   </div>
 </nav>
+
+<!--Invite Modal-->
+<div class="modal fade" id="InviteModal" tabindex="-1" role="dialog" aria-labelledby="InviteModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="FiltersModalLabel">Invite</h4>
+                <input type="text" name="networkName" id="networkName" value="" readonly="True"/>
+                <input type="hidden" name="networkId" id="networkId" value=""/>
+            </div>
+            <div class="modal-body">
+                <input class="text form-control" id="invitemail" placeholder="Input Email to Invite">
+                <div id="ivt_network_list" class="checkbox">
+                  <label>Please select networks to share</label>
+                  <ul class="list-unstyled">
+                  </ul>
+                </div>
+                <div class="modal-footer">
+                    <i class="fa fa-spinner fa-spin hide invite-progressing pull-left"></i>
+                    <a class="btn btn-success" id="userinvite">Invite</a>
+                    <button type="button" class="btn btn-default invite-cancel" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header" role="document">
+            <a class="close" data-dismiss="modal">×</a>
+            <h3>Modal header</h3>
+          </div>
+          <div class="modal-body">
+            <span id="spanmail">Sending Invite email.</span>
+          </div>
+          <div class="modal-footer">
+            <button type="button" data-dismiss="modal" class="btn">Close</button>
+          </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(function(){
+        function validateEmail(email) {
+            var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+            return re.test(email);
+        }
+        function showLoader (isLoading) {
+          if (isLoading) {
+            $("#userinvite").attr('disabled', true);
+          } else {
+            $("#userinvite").attr('disabled', false);
+          }
+        }
+        function showProgressing (isProgressing) {
+          if (isProgressing) {
+            $(".invite-progressing").removeClass('hide');
+            $("#userinvite").attr('disabled', true)
+            $(".invite-cancel").attr('disabled', true)
+          } else {
+            $(".invite-progressing").addClass('hide');
+            $("#userinvite").attr('disabled', false)
+            $(".invite-cancel").attr('disabled', false)
+          }
+        }
+        function getNetworkList () {
+            showLoader(true);
+            $("#ivt_network_list .list-unstyled").empty();
+            $.ajax({
+                url : "{% url 'networks:jsonlist' %}",
+                type: "GET",
+                datatype: 'json',
+                data: { csrfmiddlewaretoken: '{{csrf_token}}'},
+                success: function(msg) {
+                    $.each(msg, function (idx, obj) {
+                      $("#ivt_network_list .list-unstyled")
+                          .append('<li><label><input class="networkCheckbox" name="networksId[]" type="checkbox" value="' + obj.pk + '">' + obj.fields.name + '</label></li>');
+                    });
+                    showLoader(false);
+                }
+            });
+        }
+        $(".invitebtn").click(function() {
+          getNetworkList();
+{#            var invite_data = $(this).data('id');#}
+{#            network = invite_data.split("::");#}
+{#            network_id = network[0];#}
+{#            network_name = network[1];#}
+{#            $("#networkName").val(network_name);#}
+{#            $("#networkId").val(network_id);#}
+        });
+        $("#userinvite").click(function(e){
+            if ($("#userinvite").attr('disabled') === "disabled") {
+              return false;
+            }
+
+            var selectedNetworks = [];
+            var inputElements = $("#ivt_network_list .list-unstyled .networkCheckbox");
+            for(var i=0; inputElements[i]; ++i){
+              if(inputElements[i].checked){
+                selectedNetworks.push(inputElements[i].value);
+              }
+            }
+            var inviteEmail = $('#invitemail').val();
+            if (inviteEmail.trim() === "" || !validateEmail(inviteEmail)) {
+              alert('Invalid email address');
+              return false;
+            }
+            if (selectedNetworks.length == 0) {
+              alert('Please select networks to share.');
+              return false;
+            }
+            showProgressing(true);
+            $("#myModal").modal('hide');
+            $.ajax({
+                url : "{% url 'accounts:invitation' %}",
+                type: "POST",
+                datatype: 'json',
+                data: { email: inviteEmail,
+                    network: selectedNetworks,
+                    csrfmiddlewaretoken: '{{csrf_token}}'},
+                success: function(msg) {
+                    $("#InviteModal").modal('hide');
+                    $("#spanmail").text("You have successfully invited " + inviteEmail);
+                    $("#myModal").modal('show');
+                    showProgressing(false);
+                },
+                error: function () {
+                    $("#InviteModal").modal('hide');
+                    $("#spanmail").text("You did not invite " + inviteEmail + ".");
+                    $("#myModal").modal('show');
+                    showProgressing(false);
+                }
+            });
+            return false;
+        });
+    });
+
+</script>
