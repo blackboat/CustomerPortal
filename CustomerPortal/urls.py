@@ -21,7 +21,7 @@ from networks import views
 
 
 urlpatterns = [
-    url(r'^$', views.HomepageView.as_view(), name='home'),
+    url(r'^$', login_required(views.HomepageView.as_view()), name='home'),
     # url(r'^$', login_required(
     #     TemplateView.as_view(template_name='index.html')), name='home'),
     url(r'^accounts/', include('accounts.urls', namespace='accounts')),

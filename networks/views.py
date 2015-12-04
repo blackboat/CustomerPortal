@@ -7,6 +7,7 @@ from django.core import serializers
 from .models import Network
 import json
 
+
 class HomepageView(generic.ListView):
     template_name = 'index.html'
     context_object_name = 'networks'
