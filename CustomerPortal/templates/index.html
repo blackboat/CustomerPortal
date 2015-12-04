@@ -46,9 +46,14 @@
 <div class="row">
     <div class="col-md-8 col-md-offset-2">
     {% if networks %}
-        <ul>
+        <ul class="networks row list-unstyled">
         {% for network in networks %}
-            <li><a href="{% url 'networks:detail' network.id %}">{{ network.name }}</a></li>
+            <li class="col-md-6">
+              <a href="{% url 'networks:detail' network.id %}" class="btn btn-large btn-primary btn-block">
+                <i class="fa fa-sitemap fa-2x"></i><br>
+                {{ network.name }}
+              </a>
+            </li>
         {% endfor %}
         </ul>
     {% else %}
