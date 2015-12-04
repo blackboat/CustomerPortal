@@ -27,7 +27,7 @@
 <div class="row">
     <div class="col-md-8 col-md-offset-2">
     {% if networks %}
-        <ul class="networks row">
+        <ul class="networks row list-unstyled">
         {% for network in networks %}
             <li class="col-md-6">
                 <a href="{% url 'networks:detail' network.id %}" class="btn btn-large btn-primary btn-block">
