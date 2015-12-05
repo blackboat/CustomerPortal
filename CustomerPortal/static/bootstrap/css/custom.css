@@ -106,3 +106,15 @@ animation-delay: 12s;
 #InviteModal .invite-progressing {
     color: #000000;
 }
+
+.navbar-inverse {
+    background-color: #232323;
+    border-color: transparent;
+}
+.navbar-inverse .navbar-nav > li > a {
+    color: #9d9d9d;
+}
+.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
+    background-color: #444444;
+    color: #ffffff;
+}
