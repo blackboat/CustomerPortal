@@ -58,6 +58,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'networks.middleware.add_networks_middleware.AddNetworksMiddleware'
 )
 
 ROOT_URLCONF = 'CustomerPortal.urls'

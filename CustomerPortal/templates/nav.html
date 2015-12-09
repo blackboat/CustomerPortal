@@ -20,8 +20,15 @@
       <ul class="nav navbar-nav">
         <li><a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Networks <span class="caret"></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Network 1</a></li>
-            <li><a href="#">Network 2</a></li>
+          {% if request.user_networks %}
+            {% for network in request.user_networks %}
+              <li>
+                <a href="{% url 'networks:detail' network.id %}">{{ network.name }}</a>
+              </li>
+            {% endfor %}
+          {% else %}
+            <li>No networks are available.</li>
+          {% endif %}
           </ul>
         </li>
       </ul>
