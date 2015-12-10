@@ -5,6 +5,8 @@ from .models import CustomUser
 
 
 class CustomUserCreationForm(UserChangeForm):
+    first_name = forms.CharField(label='First Name', required=True)
+    last_name = forms.CharField(label='Last Name', required=True)
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
 
