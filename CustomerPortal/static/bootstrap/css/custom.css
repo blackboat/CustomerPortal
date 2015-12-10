@@ -132,3 +132,16 @@ animation-delay: 12s;
 .navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
     border-color: #101010;
 }
+
+
+.portal-NodeTableCompact {
+}
+
+.portal-NodeTableCompact .NodeSortableTable .mac,
+.portal-NodeTableCompact .NodeSortableTable .channel,
+.portal-NodeTableCompact .NodeSortableTable .load,
+.portal-NodeTableCompact .NodeSortableTable .firmware_version,
+.portal-NodeTableCompact .NodeSortableTable .uptime
+{
+	display:none;
+}

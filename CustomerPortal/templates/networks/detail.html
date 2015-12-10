@@ -30,15 +30,15 @@
 <div>
 
   <!-- Nav tabs -->
-  <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="#portalApplicationPieChart" aria-controls="portalApplicationPieChart" role="tab" data-toggle="tab">Overview</a></li>
-    <li role="presentation"><a href="#portalApplicationTable" aria-controls="portalApplicationTable" role="tab" data-toggle="tab">Applications</a></li>
-    <li role="presentation"><a href="#portalNetworkHistogram" aria-controls="portalNetworkHistogram" role="tab" data-toggle="tab">Histogram</a></li>
-    <li role="presentation"><a href="#portalNetworkMap" aria-controls="portalNetworkMap" role="tab" data-toggle="tab">Map</a></li>
-    <li role="presentation"><a href="#portalNodeTable" aria-controls="portalNodeTable" role="tab" data-toggle="tab">Access Points</a></li>
-    <li role="presentation"><a href="#portalNodeTableCompact" aria-controls="portalNodeTableCompact" role="tab" data-toggle="tab">Access Points (Compact)</a></li>
-    <li role="presentation"><a href="#portalClientTable" aria-controls="portalClientTable" role="tab" data-toggle="tab">Clients</a></li>
-    <li role="presentation"><a href="#portalSurveyTable" aria-controls="portalSurveyTable" role="tab" data-toggle="tab">Site Survey</a></li>
+  <ul class="nav nav-tabs network-detail-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#portalApplicationPieChart" data-portalid="portal-ApplicationPieChart" aria-controls="portalApplicationPieChart" role="tab" data-toggle="tab">Overview</a></li>
+    <li role="presentation"><a href="#portalApplicationTable" data-portalid="portal-ApplicationTable" aria-controls="portalApplicationTable" role="tab" data-toggle="tab">Applications</a></li>
+    <li role="presentation"><a href="#portalNetworkHistogram" data-portalid="portal-NetworkHistogram" aria-controls="portalNetworkHistogram" role="tab" data-toggle="tab">Histogram</a></li>
+    <li role="presentation"><a href="#portalNetworkMap" data-portalid="portal-NetworkMap" aria-controls="portalNetworkMap" role="tab" data-toggle="tab">Map</a></li>
+    <li role="presentation"><a href="#portalNodeTable" data-portalid="portal-NodeTable" aria-controls="portalNodeTable" role="tab" data-toggle="tab">Access Points</a></li>
+    <li role="presentation"><a href="#portalNodeTableCompact" data-portalid="portal-NodeTableCompact" aria-controls="portalNodeTableCompact" role="tab" data-toggle="tab">Access Points (Compact)</a></li>
+    <li role="presentation"><a href="#portalClientTable" data-portalid="portal-ClientTable" aria-controls="portalClientTable" role="tab" data-toggle="tab">Clients</a></li>
+    <li role="presentation"><a href="#portalSurveyTable" data-portalid="portal-SurveyTable" aria-controls="portalSurveyTable" role="tab" data-toggle="tab">Site Survey</a></li>
   </ul>
 
   <!-- Tab panes -->
@@ -60,7 +60,7 @@
 
     <!-- Network map -->
     <div role="tabpanel" class="tab-pane" id="portalNetworkMap">
-      <div class="portal-NetworkMap" style="width: 1140px;"></div>
+      <div class="portal-NetworkMap"></div>
     </div>
 
     <!-- Access point sortable table -->
@@ -84,4 +84,18 @@
     </div>
   </div>
 </div>
+  <script language="javascript">
+  var detailLoads = {};
+  $(".network-detail-tabs a").click(function () {
+    var obj = this;
+    setTimeout(function () {
+      var objID = $(obj).attr("href").substring(1);
+      var portalId = $(obj).data("portalid");
+      console.log(objID, $('#' + objID).width());
+      if (!detailLoads[portalId]) {
+        detailLoads[portalId] = cloudtrax.reload(portalId);
+      }
+    },10);
+  });
+  </script>
 {% endblock %}

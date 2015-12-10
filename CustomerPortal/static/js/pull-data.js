@@ -6,9 +6,7 @@
 	var apiUrl;
 	cloudtrax = {};
 	cloudtrax.text = {};
-
-	var main = function() {
-		var embeds = [
+    var embeds = [
 			{
 				"id":"portal-ApplicationPieChart",
 				"requiredCss":[
@@ -149,6 +147,8 @@
 				}
 			}
 		];
+	var main = function() {
+
 		var scriptElement;
 		var requiredJs = {};
 		var requiredCss = {};
@@ -195,6 +195,13 @@
 		//TODO eventually deprecate networkId in v2
 		var networkId = scriptElement.getAttribute("data-network-id") || scriptElement.getAttribute("data-networkId");
 		var lang = scriptElement.getAttribute("data-lang") || "en";
+
+        cloudtrax.clientConfig = {
+            key: key,
+            secret: secret,
+            networkId: networkId,
+            lang: lang
+        };
 
 		if (!key) {
 			console.warn("CloudTrax embed: \"data-key\" is a required attribute!");
@@ -255,60 +262,72 @@
 		var interval = setInterval(function() {
 			if (currentJs === totalJs && currentCss === totalCss) {
 				clearInterval(interval);
-				var api = cloudtrax.embed.Api();
-				api.setBaseUrl(apiUrl);
-				api.setKeySecret(key, secret);
-				var timeRequest = api.retrieveTime(function(response) {
-					console.log("CloudTrax: got time (" + response.time + ")");
-				});
-				var langRequest = cloudtrax.shared.helpers.ajax(
-					cloudtrax.PATH_RELATIVE + "/public/locale/" + lang + ".json",
-					"GET",
-					null,
-					null,
-					function(response) {
-						console.log("CloudTrax: got language (" + lang + ")");
-					}
-				);
-				cloudtrax.shared.helpers.waitAll([timeRequest, langRequest], function(responses) {
-					var timestamp = new Date(responses[0].time).getTime() / 1000;
-					api.setTime(timestamp);
-					var lang = responses[1];
-					for (var x in lang) {
-						if (!cloudtrax.text[x]) {
-							cloudtrax.text[x] = lang[x];
-						}
-					}
-					for (var i = 0; i < embeds.length; i++) {
-						var embed = embeds[i];
-						var containers = document.getElementsByClassName(embed.id);
-						for (var j = 0; j < containers.length; j++) {
-							var container = containers[j];
-							//use the container ones, if present
-							var containerKey = container.getAttribute("data-key") || key;
-							var containerSecret = container.getAttribute("data-token") || secret;
-							var containerNetworkId = container.getAttribute("data-network-id") || networkId;
-							var containerApi = api;
-
-							//make a different instance if the container has different attributes
-							if (containerKey !== key || containerSecret !== secret) {
-								containerApi = cloudtrax.embed.Api();
-								containerApi.setTime(timestamp);
-							}
-
-							containerApi.setBaseUrl(apiUrl);
-							containerApi.setKeySecret(containerKey, containerSecret);
-							embed.main({
-								"api":containerApi,
-								"container":containers[j],
-								"networkId":containerNetworkId
-							});
-						}
-					}
-				});
+                cloudtrax.isAllLoaded = true;
+                detailLoads["portal-ApplicationPieChart"] = cloudtrax.reload("portal-ApplicationPieChart");
 			}
 		}, 50);
 	};
+
+    cloudtrax.reload = function (portalId) {
+        if (!cloudtrax.isAllLoaded) {
+            return false;
+        }
+        var api = cloudtrax.embed.Api();
+        api.setBaseUrl(apiUrl);
+        api.setKeySecret(cloudtrax.clientConfig.key, cloudtrax.clientConfig.secret);
+        var timeRequest = api.retrieveTime(function(response) {
+            console.log("CloudTrax: got time (" + response.time + ")");
+        });
+        var langRequest = cloudtrax.shared.helpers.ajax(
+            cloudtrax.PATH_RELATIVE + "/public/locale/" + cloudtrax.clientConfig.lang + ".json",
+            "GET",
+            null,
+            null,
+            function(response) {
+                console.log("CloudTrax: got language (" + cloudtrax.clientConfig.lang + ")");
+            }
+        );
+        cloudtrax.shared.helpers.waitAll([timeRequest, langRequest], function(responses) {
+            var timestamp = new Date(responses[0].time).getTime() / 1000;
+            api.setTime(timestamp);
+            var lang = responses[1];
+            for (var x in lang) {
+                if (!cloudtrax.text[x]) {
+                    cloudtrax.text[x] = lang[x];
+                }
+            }
+            for (var i = 0; i < embeds.length; i++) {
+                if (embeds[i].id !== portalId) {
+                    continue;
+                }
+                var embed = embeds[i];
+                var containers = document.getElementsByClassName(embed.id);
+                for (var j = 0; j < containers.length; j++) {
+                    var container = containers[j];
+                    //use the container ones, if present
+                    var containerKey = container.getAttribute("data-key") || cloudtrax.clientConfig.key;
+                    var containerSecret = container.getAttribute("data-token") || cloudtrax.clientConfig.secret;
+                    var containerNetworkId = container.getAttribute("data-network-id") || cloudtrax.clientConfig.networkId;
+                    var containerApi = api;
+
+                    //make a different instance if the container has different attributes
+                    if (containerKey !== cloudtrax.clientConfig.key || containerSecret !== cloudtrax.clientConfig.secret) {
+                        containerApi = cloudtrax.embed.Api();
+                        containerApi.setTime(timestamp);
+                    }
+
+                    containerApi.setBaseUrl(apiUrl);
+                    containerApi.setKeySecret(containerKey, containerSecret);
+                    embed.main({
+                        "api":containerApi,
+                        "container":containers[j],
+                        "networkId":containerNetworkId
+                    });
+                }
+            }
+        });
+        return true;
+    };
 
 	window.addEventListener("DOMContentLoaded", main);
 })();
