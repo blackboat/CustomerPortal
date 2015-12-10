@@ -1,3 +1,10 @@
+var portalTabs = {
+    'portalOverview': ['portal-NetworkHistogram', 'portal-ApplicationPieChart', 'portal-NetworkMap'],
+    'portalClients': ['portal-ClientTable'],
+    'portalAccessPoints': ['portal-NetworkMap2', 'portal-NodeTable'],
+    'portalApplications': ['portal-ApplicationPieChart2', 'portal-ApplicationTable'],
+    'portalSiteSurvey': ['portal-SurveyTable']
+};
 (function() {
 	if (typeof cloudtrax !== "undefined") {
 		console.log("CloudTrax: already detected cloudtrax variable. Stopping loading.");
@@ -9,6 +16,22 @@
     var embeds = [
 			{
 				"id":"portal-ApplicationPieChart",
+				"requiredCss":[
+					//"/public/css/embed/networkhistogram.css",
+					"/public/css/shared/Layer7PieChart.css"
+				],
+				"requiredJs":[
+					"/public/js/shared/highcharts-all.js",
+					"/public/js/shared/HistoryDataAdapter.js",
+					"/public/js/shared/Layer7PieChart.js",
+					"/public/js/embed/applicationpiechart.js"
+				],
+				"main":function(config) {
+					cloudtrax.embed.applicationpiechart(config);
+				}
+			},
+            {
+				"id":"portal-ApplicationPieChart2",
 				"requiredCss":[
 					//"/public/css/embed/networkhistogram.css",
 					"/public/css/shared/Layer7PieChart.css"
@@ -57,6 +80,17 @@
 			},
 			{
 				"id":"portal-NetworkMap",
+				"requiredCss":[
+				],
+				"requiredJs":[
+					"/public/js/embed/networkmap.js"
+				],
+				"main":function(config) {
+					cloudtrax.embed.networkmap(config);
+				}
+			},
+            {
+				"id":"portal-NetworkMap2",
 				"requiredCss":[
 				],
 				"requiredJs":[
@@ -262,13 +296,17 @@
 		var interval = setInterval(function() {
 			if (currentJs === totalJs && currentCss === totalCss) {
 				clearInterval(interval);
+                // activateTabs
+                $(".network-detail-tabs li").removeClass("disabled");
+
                 cloudtrax.isAllLoaded = true;
-                detailLoads["portal-ApplicationPieChart"] = cloudtrax.reload("portal-ApplicationPieChart");
+                detailLoads["portalOverview"] = cloudtrax.reload(portalTabs['portalOverview']);
+
 			}
 		}, 50);
 	};
 
-    cloudtrax.reload = function (portalId) {
+    cloudtrax.reload = function (portalIds) {
         if (!cloudtrax.isAllLoaded) {
             return false;
         }
@@ -297,7 +335,7 @@
                 }
             }
             for (var i = 0; i < embeds.length; i++) {
-                if (embeds[i].id !== portalId) {
+                if (portalIds.indexOf(embeds[i].id) < 0) {
                     continue;
                 }
                 var embed = embeds[i];
@@ -330,4 +368,6 @@
     };
 
 	window.addEventListener("DOMContentLoaded", main);
+
+
 })();
